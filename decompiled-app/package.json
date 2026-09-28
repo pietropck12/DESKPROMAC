@@ -1,6 +1,6 @@
 {
   "name": "deskpro",
-  "version": "6.1.28",
+  "version": "6.1.29",
   "private": true,
   "description": "DeskPro Desktop",
   "homepage": "./",
@@ -13,7 +13,8 @@
   "type": "commonjs",
   "main": "dist-electron/main/index.js",
   "scripts": {
-    "build:mac": "electron-builder --config ../electron-builder-deskpro.json --mac --universal"
+    "prepare:mac:native": "node ../tools/prepare-macos-native-deps.cjs",
+    "build:mac": "npm run prepare:mac:native && electron-builder --config ../electron-builder-deskpro.json --mac --universal"
   },
   "dependencies": {
     "@peculiar/webcrypto": "1.5.0",

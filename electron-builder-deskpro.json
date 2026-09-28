@@ -28,6 +28,8 @@
     }
   ],
   "mac": {
+    "singleArchFiles": "**/node_modules/@img/**/*",
+    "x64ArchFiles": "**/node_modules/@img/**/*",
     "target": [
       {
         "target": "dmg",
