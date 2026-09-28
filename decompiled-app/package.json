@@ -1,6 +1,6 @@
 {
   "name": "deskpro",
-  "version": "6.1.26",
+  "version": "6.1.27",
   "private": true,
   "description": "DeskPro Desktop",
   "homepage": "./",
@@ -38,7 +38,7 @@
     "os-name": "5.1.0",
     "pino": "10.1.0",
     "qrcode": "1.5.4",
-    "sharp": "0.32.6",
+    "sharp": "0.34.4",
     "socks-proxy-agent": "8.0.5",
     "uuid": "11.1.0",
     "zod": "3.25.76"
