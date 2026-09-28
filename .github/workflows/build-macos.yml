@@ -1,0 +1,94 @@
+name: Gerar DeskPro para macOS
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  macos-universal:
+    name: macOS universal (Intel e Apple Silicon)
+    runs-on: macos-15
+    timeout-minutes: 60
+    defaults:
+      run:
+        working-directory: decompiled-app
+    env:
+      CSC_LINK: ${{ secrets.APPLE_CERTIFICATE }}
+      CSC_KEY_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+      APPLE_ID: ${{ secrets.APPLE_ID }}
+      APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
+      APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+
+    steps:
+      - name: Baixar o código
+        uses: actions/checkout@v4
+
+      - name: Preparar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: decompiled-app/package-lock.json
+
+      - name: Instalar dependências reproduzíveis
+        run: npm ci
+
+      - name: Validar credenciais Apple opcionais
+        run: |
+          if [[ -n "$CSC_LINK" ]]; then
+            test -n "$CSC_KEY_PASSWORD"
+            test -n "$APPLE_ID"
+            test -n "$APPLE_APP_SPECIFIC_PASSWORD"
+            test -n "$APPLE_TEAM_ID"
+            echo "Assinatura e notarização Apple habilitadas."
+          else
+            echo "Gerando edição de teste sem assinatura Apple."
+          fi
+
+      - name: Gerar DMG, ZIP e metadados de atualização
+        run: |
+          if [[ -n "$CSC_LINK" ]]; then
+            npx electron-builder --config ../electron-builder-deskpro.json --mac --universal -c.mac.notarize=true
+          else
+            npm run build:mac
+          fi
+
+      - name: Conferir os pacotes gerados
+        run: |
+          test -f ../release/DeskPro-$(node -p "require('./package.json').version")-mac-universal.dmg
+          test -f ../release/DeskPro-$(node -p "require('./package.json').version")-mac-universal.zip
+          test -f ../release/latest-mac.yml
+          file ../release/DeskPro-*.dmg ../release/DeskPro-*.zip
+
+      - name: Disponibilizar os pacotes para publicação
+        uses: actions/upload-artifact@v4
+        with:
+          name: DeskPro-macOS-universal
+          path: |
+            release/DeskPro-*-mac-universal.dmg
+            release/DeskPro-*-mac-universal.zip
+            release/latest-mac.yml
+            release/*.blockmap
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Publicar a versão macOS no GitHub
+        if: startsWith(github.ref, 'refs/tags/')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          gh release create "$GITHUB_REF_NAME" \
+            "../release/DeskPro-${VERSION}-mac-universal.dmg" \
+            "../release/DeskPro-${VERSION}-mac-universal.zip" \
+            "../release/latest-mac.yml" \
+            ../release/*.blockmap \
+            --repo "$GITHUB_REPOSITORY" \
+            --title "DeskPro ${VERSION} para macOS" \
+            --generate-notes \
+            --latest
