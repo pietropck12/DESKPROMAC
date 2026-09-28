@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DeskPro</title>
+    <style>
+      :root { color-scheme: dark; font-family: "Segoe UI", Inter, Arial, sans-serif; }
+      * { box-sizing: border-box; }
+      html, body { height: 100%; margin: 0; overflow: hidden; }
+      body {
+        align-items: center;
+        background:
+          radial-gradient(circle at 50% 42%, rgba(24, 182, 112, .16), transparent 31%),
+          radial-gradient(circle at 12% 18%, rgba(38, 123, 242, .10), transparent 23%),
+          linear-gradient(145deg, #06101d 0%, #091827 52%, #06111f 100%);
+        color: #f8fafc;
+        display: flex;
+        justify-content: center;
+        min-height: 100%;
+        position: relative;
+      }
+      body::before {
+        background-image:
+          linear-gradient(rgba(148, 163, 184, .045) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(148, 163, 184, .045) 1px, transparent 1px);
+        background-size: 46px 46px;
+        content: "";
+        inset: 0;
+        mask-image: radial-gradient(circle at center, #000 0%, transparent 72%);
+        opacity: .48;
+        position: absolute;
+      }
+      body::after {
+        animation: drift 7s ease-in-out infinite alternate;
+        background: radial-gradient(circle, rgba(52, 211, 153, .22) 0 1px, transparent 2px) 0 0 / 76px 76px;
+        content: "";
+        inset: -10%;
+        opacity: .28;
+        position: absolute;
+      }
+      .deskpro-loader {
+        align-items: center;
+        display: flex;
+        flex-direction: column;
+        isolation: isolate;
+        position: relative;
+        text-align: center;
+        width: min(420px, calc(100vw - 48px));
+        z-index: 1;
+      }
+      .deskpro-loader-orbit {
+        align-items: center;
+        display: flex;
+        height: 142px;
+        justify-content: center;
+        margin-bottom: 20px;
+        position: relative;
+        width: 142px;
+      }
+      .deskpro-loader-orbit::before,
+      .deskpro-loader-orbit::after {
+        border-radius: 50%;
+        content: "";
+        inset: 0;
+        position: absolute;
+      }
+      .deskpro-loader-orbit::before {
+        animation: spin 1.7s linear infinite;
+        background: conic-gradient(from 30deg, transparent 0 18%, #31df91 42%, #16a66a 58%, transparent 79%);
+        box-shadow: 0 0 34px rgba(49, 223, 145, .16);
+        mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 0);
+      }
+      .deskpro-loader-orbit::after {
+        border: 1px solid rgba(148, 163, 184, .16);
+        inset: 13px;
+      }
+      .deskpro-loader-orbit img {
+        animation: breathe 1.9s ease-in-out infinite;
+        filter: drop-shadow(0 9px 23px rgba(34, 197, 94, .35));
+        height: 70px;
+        object-fit: contain;
+        position: relative;
+        width: 70px;
+        z-index: 1;
+      }
+      h1 { font-size: 34px; letter-spacing: -.04em; margin: 0; }
+      .deskpro-loader-kicker { color: #7ef0b8; font-size: 14px; font-weight: 650; margin: 10px 0 24px; }
+      .deskpro-loader-track { background: rgba(148, 163, 184, .14); border: 1px solid rgba(148, 163, 184, .11); border-radius: 999px; height: 7px; overflow: hidden; width: 100%; }
+      .deskpro-loader-progress { animation: progress 2.2s cubic-bezier(.42, 0, .25, 1) infinite; background: linear-gradient(90deg, #0d9f63, #45e69a, #0d9f63); border-radius: inherit; box-shadow: 0 0 18px rgba(69, 230, 154, .5); height: 100%; width: 42%; }
+      .deskpro-loader-note { color: #91a3b8; font-size: 12px; letter-spacing: .01em; margin: 13px 0 0; }
+      .deskpro-loader-version { bottom: -82px; color: #5f7186; font-size: 11px; letter-spacing: .08em; position: absolute; text-transform: uppercase; }
+      @keyframes spin { to { transform: rotate(1turn); } }
+      @keyframes breathe { 50% { filter: drop-shadow(0 12px 30px rgba(34, 197, 94, .52)); transform: scale(1.045); } }
+      @keyframes progress { 0% { transform: translateX(-120%); } 55% { transform: translateX(90%); } 100% { transform: translateX(245%); } }
+      @keyframes drift { to { transform: translate3d(22px, -16px, 0); } }
+      @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; } }
+    </style>
+  </head>
+  <body>
+    <main class="deskpro-loader" aria-live="polite" aria-label="Carregando o DeskPro">
+      <div class="deskpro-loader-orbit"><img src="./dist/assets/deskpro-icon.png" alt=""></div>
+      <h1>DeskPro</h1>
+      <p class="deskpro-loader-kicker">Preparando seu ambiente...</p>
+      <div class="deskpro-loader-track"><div class="deskpro-loader-progress"></div></div>
+      <p class="deskpro-loader-note">Conectando seus recursos com segurança</p>
+      <span class="deskpro-loader-version">versão 6.1.26</span>
+    </main>
+  </body>
+</html>

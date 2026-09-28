@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/x-icon" href="./icon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DeskPro</title>
+    <script id="deskpro-title-lock">(()=>{const t="DeskPro",s=()=>{if(document.title!==t)document.title=t};s();setInterval(s,500);document.addEventListener("DOMContentLoaded",s);})();</script>
+    <style>
+      .app-loading-overlay {
+        align-items: center;
+        background: radial-gradient(circle at 50% 42%, rgba(24,182,112,.16), transparent 31%), linear-gradient(145deg,#06101d,#091827 52%,#06111f);
+        color: #f8fafc;
+        display: flex;
+        font-family: "Segoe UI", Inter, Arial, sans-serif;
+        height: 100vh;
+        inset: 0;
+        justify-content: center;
+        position: fixed;
+        width: 100vw;
+        z-index: 9999;
+      }
+      .deskpro-loader { align-items:center; display:flex; flex-direction:column; text-align:center; width:min(420px,calc(100vw - 48px)); }
+      .deskpro-loader-orbit { align-items:center; display:flex; height:142px; justify-content:center; margin-bottom:20px; position:relative; width:142px; }
+      .deskpro-loader-orbit::before { animation:deskpro-loader-spin 1.7s linear infinite; background:conic-gradient(from 30deg,transparent 0 18%,#31df91 42%,#16a66a 58%,transparent 79%); border-radius:50%; content:""; inset:0; mask:radial-gradient(farthest-side,transparent calc(100% - 3px),#000 0); position:absolute; }
+      .deskpro-loader-orbit img { filter:drop-shadow(0 9px 23px rgba(34,197,94,.38)); height:70px; position:relative; width:70px; z-index:1; }
+      .deskpro-loader h1 { font-size:34px; letter-spacing:-.04em; margin:0; }
+      .deskpro-loader-kicker { color:#7ef0b8; font-size:14px; font-weight:650; margin:10px 0 24px; }
+      .deskpro-loader-track { background:rgba(148,163,184,.14); border-radius:999px; height:7px; overflow:hidden; width:100%; }
+      .deskpro-loader-progress { animation:deskpro-loader-progress 2.2s ease-in-out infinite; background:linear-gradient(90deg,#0d9f63,#45e69a,#0d9f63); border-radius:inherit; height:100%; width:42%; }
+      .deskpro-loader-note { color:#91a3b8; font-size:12px; margin:13px 0 0; }
+      .deskpro-loader-version { color:#5f7186; font-size:11px; letter-spacing:.08em; margin-top:40px; text-transform:uppercase; }
+      @keyframes deskpro-loader-spin { to { transform:rotate(1turn); } }
+      @keyframes deskpro-loader-progress { 0% { transform:translateX(-120%); } 55% { transform:translateX(90%); } 100% { transform:translateX(245%); } }
+    </style>
+    <script defer src="./assets/deskpro-ui.js"></script>
+    <script defer src="./assets/deskpro-activation.js"></script>
+    <script type="module" crossorigin src="./assets/index.5RzZrdOY.js"></script>
+    <link rel="modulepreload" crossorigin href="./chunks/DcHvO0tL.js">
+    <link rel="stylesheet" crossorigin href="./assets/deskpro-activation.css">
+    <link rel="stylesheet" crossorigin href="./assets/deskpro-ui.css">
+    <link rel="stylesheet" crossorigin href="./assets/react-DZrYvFpI.css">
+    <link rel="stylesheet" crossorigin href="./assets/index-BO8inWhT.css">
+  </head>
+  <body>
+    <div id="root">
+      <div class="app-loading-overlay">
+        <main class="deskpro-loader" aria-live="polite" aria-label="Carregando o DeskPro">
+          <div class="deskpro-loader-orbit"><img src="./assets/deskpro-icon.png" alt=""></div>
+          <h1>DeskPro</h1>
+          <p class="deskpro-loader-kicker">Preparando seu ambiente...</p>
+          <div class="deskpro-loader-track"><div class="deskpro-loader-progress"></div></div>
+          <p class="deskpro-loader-note">Conectando seus recursos com segurança</p>
+          <span class="deskpro-loader-version">versão 6.1.26</span>
+        </main>
+      </div>
+    </div>
+  </body>
+</html>

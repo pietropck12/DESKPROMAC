@@ -1,0 +1,57 @@
+{
+  "appId": "online.linksite.deskpro",
+  "productName": "DeskPro",
+  "electronVersion": "39.2.7",
+  "asar": true,
+  "directories": {
+    "output": "../release"
+  },
+  "files": [
+    "dist/**/*",
+    "dist-electron/**/*",
+    "loading.html",
+    "package.json",
+    "!dist-electron/main/main.jsc",
+    "!**/*.map",
+    "!**/*.gz",
+    "!**/*.bak-*",
+    "!release*/**"
+  ],
+  "extraResources": [
+    {
+      "from": "../resources/icon.ico",
+      "to": "icon.ico"
+    },
+    {
+      "from": "../resources/icon.png",
+      "to": "icon.png"
+    }
+  ],
+  "mac": {
+    "target": [
+      {
+        "target": "dmg",
+        "arch": ["universal"]
+      },
+      {
+        "target": "zip",
+        "arch": ["universal"]
+      }
+    ],
+    "icon": "../resources/icon.png",
+    "category": "public.app-category.business",
+    "artifactName": "DeskPro-${version}-mac-universal.${ext}",
+    "publish": {
+      "provider": "github",
+      "owner": "pietropck12",
+      "repo": "DESKPROMAC",
+      "releaseType": "release"
+    },
+    "extendInfo": {
+      "NSMicrophoneUsageDescription": "O DeskPro usa o microfone somente quando o usuário escolhe gravar ou enviar áudio.",
+      "NSCameraUsageDescription": "O DeskPro usa a câmera somente quando o usuário escolhe capturar uma imagem.",
+      "NSDocumentsFolderUsageDescription": "O DeskPro acessa documentos somente quando o usuário seleciona um arquivo para enviar.",
+      "NSDownloadsFolderUsageDescription": "O DeskPro acessa Downloads somente quando o usuário seleciona ou salva um arquivo."
+    }
+  }
+}
