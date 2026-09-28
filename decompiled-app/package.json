@@ -1,6 +1,6 @@
 {
   "name": "deskpro",
-  "version": "6.1.30",
+  "version": "6.1.31",
   "private": true,
   "description": "DeskPro Desktop",
   "homepage": "./",
@@ -14,7 +14,7 @@
   "main": "dist-electron/main/index.js",
   "scripts": {
     "prepare:mac:native": "node ../tools/prepare-macos-native-deps.cjs",
-    "build:mac": "npm run prepare:mac:native && env -u CSC_LINK -u CSC_KEY_PASSWORD -u APPLE_ID -u APPLE_APP_SPECIFIC_PASSWORD -u APPLE_TEAM_ID electron-builder --config ../electron-builder-deskpro.json --mac --universal"
+    "build:mac": "npm run prepare:mac:native && env -u CSC_LINK -u CSC_KEY_PASSWORD -u APPLE_ID -u APPLE_APP_SPECIFIC_PASSWORD -u APPLE_TEAM_ID electron-builder --config ../electron-builder-deskpro.json --mac --universal --publish never"
   },
   "dependencies": {
     "@peculiar/webcrypto": "1.5.0",
