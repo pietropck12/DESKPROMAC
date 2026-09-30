@@ -1498,6 +1498,8 @@ async function databasePatchAfter(db2) {
 var dbLogger = logger_default("db");
 dbLogger.debug({ cwd: process.cwd() }, "initializing nedb stores from cwd");
 dbLogger.debug({ userDataPath: import_electron4.app.getPath("userData") }, "nedb userData path");
+import_fs_extra2.default.ensureDirSync(import_path.default.join(import_electron4.app.getPath("userData"), "database"));
+import_fs_extra2.default.ensureDirSync(import_path.default.join(import_electron4.app.getPath("userData"), "sessions"));
 databasePatchBefore();
 var dbFactory = (fileName, timestampData) => import_nedb_promises.default.create({
   filename: import_electron4.app.getPath("userData") + "/database/" + fileName,
@@ -1530,7 +1532,9 @@ db.chatBot.ensureIndex({ fieldName: "contactKey" }, function(err) {
 });
 db.chatBot.ensureIndex({ fieldName: "timestamp" }, function(err) {
 });
-databasePatchAfter(db);
+databasePatchAfter(db).catch((error2) => {
+  patchLogger.error({ err: error2?.message || error2 }, "database patch after failed");
+});
 var db_default = db;
 
 // recovered-main-src/electron/main/db.action.js
@@ -15356,7 +15360,7 @@ async function createWindow() {
   import_electron8.ipcMain.handle("deskpro-license-activate", async (_event, data = {}) => {
     return await licUtil.activeKey({ name: "Cliente DeskPro", email: "cliente@deskpro.local", phone: "+5500000000000", place: "Brasil", country: "BR", key: String(data.key || "").trim().toUpperCase() });
   });
-  import_electron8.ipcMain.on("task", async (event, task) => {
+  const executeDeskproTask = async (event, task) => {
     const { type, data, id } = task;
     taskLogger.info({ type }, "ipcMain task received");
     if (type == "get.all") {
@@ -16804,6 +16808,80 @@ async function createWindow() {
         status: false,
         message: `No function ${type} found!`
       };
+    }
+  };
+  const createDeskproTaskFailure = (task, error2, code = "task_failed") => {
+    const type = String(task?.type || "unknown");
+    const response = {
+      status: false,
+      code,
+      message: error2?.message || String(error2 || "Não foi possível concluir a operação.")
+    };
+    if (type === "contact.all") response.contacts = [];
+    if (type === "instance.all") response.instances = [];
+    if (type === "template.all") response.templates = [];
+    if (type === "auto-reply.all") response.autoReplies = [];
+    if (type === "welcome.message.all") response.welcomeMessages = [];
+    if (type === "campaign.all") response.campaigns = [];
+    if (type === "unsubscribe.all") response.unsubscribes = [];
+    if (type === "received.messages") response.messages = [];
+    if (type === "groups.all") response.groups = [];
+    return response;
+  };
+  import_electron8.ipcMain.removeAllListeners("task");
+  import_electron8.ipcMain.on("task", (event, task) => {
+    executeDeskproTask(event, task).catch((error2) => {
+      taskLogger.error(
+        { type: task?.type, err: error2?.message || error2 },
+        "legacy ipcMain task failed"
+      );
+      event.returnValue = createDeskproTaskFailure(task, error2);
+    });
+  });
+  import_electron8.ipcMain.removeHandler("deskpro-task");
+  import_electron8.ipcMain.handle("deskpro-task", async (_event, task) => {
+    let response;
+    let responseAssigned = false;
+    let timeoutId;
+    const virtualEvent = {};
+    Object.defineProperty(virtualEvent, "returnValue", {
+      configurable: false,
+      enumerable: true,
+      get() {
+        return response;
+      },
+      set(value) {
+        response = value;
+        responseAssigned = true;
+      }
+    });
+    try {
+      await Promise.race([
+        executeDeskproTask(virtualEvent, task),
+        new Promise((_, reject) => {
+          timeoutId = setTimeout(() => {
+            const error2 = new Error("A operação excedeu o tempo limite de 120 segundos.");
+            error2.code = "task_timeout";
+            reject(error2);
+          }, 12e4);
+        })
+      ]);
+      if (!responseAssigned) {
+        return createDeskproTaskFailure(
+          task,
+          new Error("A operação terminou sem retornar uma resposta."),
+          "empty_task_response"
+        );
+      }
+      return response;
+    } catch (error2) {
+      taskLogger.error(
+        { type: task?.type, err: error2?.message || error2 },
+        "asynchronous ipcMain task failed"
+      );
+      return createDeskproTaskFailure(task, error2, error2?.code || "task_failed");
+    } finally {
+      if (timeoutId) clearTimeout(timeoutId);
     }
   });
   scheduleLicenseSyncJob("startup");

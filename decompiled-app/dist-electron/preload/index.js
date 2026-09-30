@@ -18,6 +18,9 @@ electron.contextBridge.exposeInMainWorld("ipcRenderer", {
   },
   sendSync(...args) {
     const [channel, ...omit] = args;
+    if (channel === "task") {
+      return electron.ipcRenderer.invoke("deskpro-task", ...omit);
+    }
     return electron.ipcRenderer.sendSync(channel, ...omit);
   },
   invoke(...args) {
